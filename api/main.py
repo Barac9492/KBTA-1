@@ -155,6 +155,51 @@ async def trigger_briefing(
         timestamp=datetime.now().isoformat()
     )
 
+@app.get("/trigger", response_model=BriefingResponse)
+async def trigger_briefing_simple():
+    """Simple GET endpoint to trigger a briefing."""
+    try:
+        # Check if pipeline is already running
+        current_status = pipeline.get_status()
+        if current_status.status == "running":
+            return BriefingResponse(
+                status="running",
+                message="Pipeline is already running. Please wait for completion.",
+                timestamp=datetime.now().isoformat()
+            )
+        
+        # Start the briefing pipeline
+        briefing = await run_briefing_pipeline(
+            pipeline,
+            force_run=False,
+            include_notion=False,  # Disable Notion for simplicity
+            include_markdown=True,
+            include_json=True
+        )
+        
+        if briefing:
+            return BriefingResponse(
+                status="success",
+                message="Briefing generated successfully",
+                briefing_id=briefing.briefing_id,
+                timestamp=datetime.now().isoformat(),
+                data=briefing.to_dict()
+            )
+        else:
+            return BriefingResponse(
+                status="failed",
+                message="Failed to generate briefing",
+                timestamp=datetime.now().isoformat()
+            )
+            
+    except Exception as e:
+        logger.error(f"Error triggering briefing: {e}")
+        return BriefingResponse(
+            status="error",
+            message=f"Error generating briefing: {str(e)}",
+            timestamp=datetime.now().isoformat()
+        )
+
 @app.get("/latest", response_model=BriefingResponse)
 async def get_latest_briefing():
     """Get the latest briefing data."""
@@ -162,9 +207,15 @@ async def get_latest_briefing():
         briefing_data = pipeline.get_latest_briefing()
         
         if not briefing_data:
-            raise HTTPException(
-                status_code=404,
-                detail="No briefing data available. Please run a briefing first."
+            # Return a helpful message instead of 404 error
+            return BriefingResponse(
+                status="no_data",
+                message="No briefing data available yet. Please trigger a briefing first using POST /trigger",
+                timestamp=datetime.now().isoformat(),
+                data={
+                    "message": "No briefing has been generated yet. Use the trigger endpoint to create your first briefing.",
+                    "suggestion": "POST /trigger to generate a new briefing"
+                }
             )
         
         return BriefingResponse(
