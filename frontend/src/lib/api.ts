@@ -66,8 +66,8 @@ class ApiClient {
   }
 
   // Trigger new briefing
-  async triggerBriefing(dryRun: boolean = false): Promise<ApiResponse<any>> {
-    return this.request('/trigger', {
+  async triggerBriefing(dryRun: boolean = false): Promise<ApiResponse<{ message: string }>> {
+    return this.request<{ message: string }>('/trigger', {
       method: 'POST',
       body: JSON.stringify({ dry_run: dryRun }),
     });
