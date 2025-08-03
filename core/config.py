@@ -68,34 +68,48 @@ class Config:
     
     def _load_from_env(self):
         """Load configuration from environment variables."""
-        # LLM Configuration
-        self.llm.openai_api_key = os.getenv("OPENAI_API_KEY")
+        # OpenAI Configuration
+        self.llm.openai_api_key = os.getenv("OPENAI_API_KEY", "")
         self.llm.model = os.getenv("ANALYSIS_MODEL", "gpt-4")
         self.llm.max_tokens = int(os.getenv("MAX_TOKENS", "2000"))
         self.llm.temperature = float(os.getenv("TEMPERATURE", "0.3"))
         
         # Notion Configuration
-        self.notion.token = os.getenv("NOTION_TOKEN")
-        self.notion.database_id = os.getenv("NOTION_DATABASE_ID")
+        self.notion.token = os.getenv("NOTION_TOKEN", "")
+        self.notion.database_id = os.getenv("NOTION_DATABASE_ID", "")
         self.notion.enabled = bool(self.notion.token and self.notion.database_id)
         
+        # API Configuration
+        self.api.host = os.getenv("API_HOST", "0.0.0.0")
+        self.api.port = int(os.getenv("API_PORT", "8000"))
+        
+        # Logging Configuration
+        self.logging.level = os.getenv("LOG_LEVEL", "INFO")
+        
         # Scraping Configuration
-        self.scraping.delay_between_requests = float(os.getenv("SCRAPING_DELAY", "2.0"))
+        self.scraping.delay = int(os.getenv("SCRAPING_DELAY", "2"))
         self.scraping.max_posts_per_source = int(os.getenv("MAX_POSTS_PER_SOURCE", "50"))
         
         # Pipeline Configuration
+        self.pipeline.schedule_time = os.getenv("SCHEDULE_TIME", "06:00")
         self.pipeline.auto_run = os.getenv("AUTO_RUN", "false").lower() == "true"
-        self.pipeline.schedule_time = os.getenv("SCHEDULE_TIME", "09:00")
         self.pipeline.retention_days = int(os.getenv("RETENTION_DAYS", "30"))
         
         # Output Configuration
-        self.output.notion_enabled = self.notion.enabled
         self.output.markdown_enabled = os.getenv("MARKDOWN_ENABLED", "true").lower() == "true"
         self.output.json_enabled = os.getenv("JSON_ENABLED", "true").lower() == "true"
         
-        output_dir = os.getenv("OUTPUT_DIR", "output")
-        self.output.output_dir = Path(output_dir)
-        self.output.output_dir.mkdir(exist_ok=True)
+        # Use /tmp for Vercel compatibility (read-only filesystem)
+        if os.getenv("VERCEL"):
+            self.output.output_dir = Path("/tmp")
+        else:
+            self.output.output_dir = Path(os.getenv("OUTPUT_DIR", "output"))
+            # Only try to create directory if not on Vercel
+            try:
+                self.output.output_dir.mkdir(exist_ok=True)
+            except OSError:
+                # Fallback to /tmp if we can't create the directory
+                self.output.output_dir = Path("/tmp")
     
     def _validate_config(self):
         """Validate configuration settings."""
@@ -110,15 +124,15 @@ class Config:
         return {
             "naver_beauty": {
                 "urls": [
-                    "https://beauty.naver.com/",
-                    "https://blog.naver.com/PostList.naver?blogId=beauty_naver",
-                    "https://cafe.naver.com/beautytrends",
+                    "https://search.naver.com/search.naver?where=view&query=K뷰티+트렌드",
+                    "https://search.naver.com/search.naver?where=view&query=한국화장품+리뷰",
+                    "https://search.naver.com/search.naver?where=view&query=K뷰티+신상품",
                 ],
                 "selectors": {
-                    "posts": "div.post_item, div.blog_post, div.cafe_post",
-                    "title": "h3.title, h2.title, h1.title",
-                    "content": "div.content, div.post_content, div.cafe_content",
-                    "date": "span.date, time, span.post_date",
+                    "posts": "li.bx, div.total_wrap, div.thumb",
+                    "title": "a.title_link, h3.title, a.link_tit",
+                    "content": "div.dsc, div.content, p.content",
+                    "date": "span.date, time, span.time",
                     "author": "span.author, a.author, span.writer"
                 }
             },
@@ -131,9 +145,9 @@ class Config:
             },
             "youtube_beauty": {
                 "channels": [
-                    "https://www.youtube.com/@koreanbeauty",
-                    "https://www.youtube.com/@kbeauty_trends",
-                    "https://www.youtube.com/@koreanskincare"
+                    "https://www.youtube.com/results?search_query=korean+beauty+trends",
+                    "https://www.youtube.com/results?search_query=korean+skincare+reviews",
+                    "https://www.youtube.com/results?search_query=kbeauty+new+products"
                 ]
             }
         }
