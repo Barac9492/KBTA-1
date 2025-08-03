@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 from typing import List, Dict, Optional
 from pathlib import Path
+import os
 
 from playwright.async_api import async_playwright, Browser, Page
 from bs4 import BeautifulSoup
@@ -37,6 +38,11 @@ class KBeautyScraper:
     async def scrape_all_sources(self) -> List[ScrapedPost]:
         """Scrape content from all configured sources."""
         logger.info("Starting K-beauty content scraping...")
+        
+        # Check if we're in test mode
+        if os.getenv("TEST_MODE", "false").lower() == "true":
+            logger.info("Running in test mode with mock data")
+            return self._generate_mock_data()
         
         browser = await self.init_browser()
         
@@ -205,8 +211,7 @@ class KBeautyScraper:
                 source="naver_beauty",
                 url=url,
                 author=author.strip(),
-                date=date.strip(),
-                scraped_at=datetime.now()
+                date=date.strip()
             )
             
         except Exception as e:
@@ -252,6 +257,54 @@ class KBeautyScraper:
             
         except Exception as e:
             logger.error(f"Error saving data: {e}")
+
+    def _generate_mock_data(self) -> List[ScrapedPost]:
+        """Generate mock data for testing."""
+        mock_posts = [
+            ScrapedPost(
+                title="2024년 K뷰티 트렌드: 글래스 스킨 메이크업",
+                content="올해 가장 인기 있는 K뷰티 트렌드는 글래스 스킨 메이크업입니다. 투명하고 촉촉한 피부 표현이 핵심이며, 셀럽들도 이 트렌드를 적극 활용하고 있습니다.",
+                source="naver_beauty",
+                url="https://example.com/glass-skin-trend",
+                date=datetime.now(),
+                author="K뷰티 전문가"
+            ),
+            ScrapedPost(
+                title="한국 화장품 브랜드 신상품 리뷰",
+                content="새로 출시된 한국 화장품 브랜드들의 제품들을 리뷰해보았습니다. 특히 스킨케어 제품들의 품질이 매우 우수하며, 해외에서도 큰 인기를 얻고 있습니다.",
+                source="instagram_beauty",
+                url="https://example.com/korean-cosmetics-review",
+                date=datetime.now(),
+                author="뷰티 인플루언서"
+            ),
+            ScrapedPost(
+                title="K뷰티 메이크업 튜토리얼",
+                content="한국식 메이크업 기법을 활용한 데일리 메이크업 튜토리얼입니다. 자연스럽고 깔끔한 메이크업이 핵심이며, 누구나 쉽게 따라할 수 있습니다.",
+                source="youtube_beauty",
+                url="https://example.com/kbeauty-tutorial",
+                date=datetime.now(),
+                author="뷰티 유튜버"
+            ),
+            ScrapedPost(
+                title="한국 스킨케어 루틴 공유",
+                content="10단계 한국 스킨케어 루틴을 공유합니다. 각 단계별로 사용하는 제품과 방법을 자세히 설명했으며, 피부 개선 효과를 경험할 수 있습니다.",
+                source="naver_beauty",
+                url="https://example.com/korean-skincare-routine",
+                date=datetime.now(),
+                author="스킨케어 전문가"
+            ),
+            ScrapedPost(
+                title="K뷰티 신상품 출시 정보",
+                content="이번 달 새로 출시되는 K뷰티 브랜드들의 신상품 정보를 모아보았습니다. 특히 마스크팩과 에센스 제품들이 주목받고 있습니다.",
+                source="naver_beauty",
+                url="https://example.com/kbeauty-new-products",
+                date=datetime.now(),
+                author="뷰티 리뷰어"
+            )
+        ]
+        
+        logger.info(f"Generated {len(mock_posts)} mock posts for testing")
+        return mock_posts
 
 async def main():
     """Main function to run the scraper."""
