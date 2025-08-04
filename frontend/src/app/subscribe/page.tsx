@@ -35,7 +35,7 @@ export default function SubscribePage() {
       
       // For now, just show success
       setSuccess(true);
-    } catch (error) {
+    } catch {
       setError('Failed to subscribe. Please try again.');
     } finally {
       setLoading(false);
