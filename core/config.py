@@ -79,15 +79,8 @@ class Config:
         self.notion.database_id = os.getenv("NOTION_DATABASE_ID", "")
         self.notion.enabled = bool(self.notion.token and self.notion.database_id)
         
-        # API Configuration
-        self.api.host = os.getenv("API_HOST", "0.0.0.0")
-        self.api.port = int(os.getenv("API_PORT", "8000"))
-        
-        # Logging Configuration
-        self.logging.level = os.getenv("LOG_LEVEL", "INFO")
-        
         # Scraping Configuration
-        self.scraping.delay = int(os.getenv("SCRAPING_DELAY", "2"))
+        self.scraping.delay_between_requests = float(os.getenv("SCRAPING_DELAY", "2"))
         self.scraping.max_posts_per_source = int(os.getenv("MAX_POSTS_PER_SOURCE", "50"))
         
         # Pipeline Configuration

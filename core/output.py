@@ -4,6 +4,7 @@ Output handlers for K-Beauty Trend Briefing System
 
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -18,11 +19,42 @@ class OutputHandler:
     
     def __init__(self):
         self.output_dir = config.output.output_dir
-        self.output_dir.mkdir(exist_ok=True)
+        # Only try to create directory if not on Vercel
+        if not os.getenv("VERCEL"):
+            try:
+                self.output_dir.mkdir(exist_ok=True)
+            except OSError:
+                logger.warning(f"Could not create output directory {self.output_dir}, using /tmp")
+                self.output_dir = Path("/tmp")
+        
+        logger.info(f"Output handler initialized with directory: {self.output_dir}")
     
     def save_briefing(self, briefing: DailyBriefing) -> bool:
         """Save briefing in the handler's format."""
         raise NotImplementedError
+    
+    def _log_file_operation(self, operation: str, filepath: Path, success: bool, size: Optional[int] = None):
+        """Log file operations for monitoring."""
+        log_entry = {
+            "operation": operation,
+            "filepath": str(filepath),
+            "success": success,
+            "timestamp": datetime.now().isoformat(),
+            "environment": "vercel" if os.getenv("VERCEL") else "local"
+        }
+        
+        if size is not None:
+            log_entry["size_bytes"] = size
+        
+        logger.info(f"File operation: {json.dumps(log_entry)}")
+        
+        # Also log to a dedicated file for monitoring
+        log_file = self.output_dir / "file_operations.log"
+        try:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry) + '\n')
+        except Exception as e:
+            logger.error(f"Failed to write to file operations log: {e}")
 
 class MarkdownOutputHandler(OutputHandler):
     """Handler for saving briefings in Markdown format."""
@@ -41,11 +73,16 @@ class MarkdownOutputHandler(OutputHandler):
             with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(markdown_content)
             
+            # Log the operation
+            self._log_file_operation("write", filepath, True, len(markdown_content.encode('utf-8')))
+            
             logger.info(f"Markdown briefing saved: {filepath}")
             return True
             
         except Exception as e:
             logger.error(f"Failed to save markdown briefing: {e}")
+            if 'filepath' in locals():
+                self._log_file_operation("write", filepath, False)
             return False
 
 class JSONOutputHandler(OutputHandler):
@@ -65,11 +102,19 @@ class JSONOutputHandler(OutputHandler):
             with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(briefing_data, f, indent=2, cls=CustomJSONEncoder, ensure_ascii=False)
             
+            # Get file size for logging
+            file_size = filepath.stat().st_size if filepath.exists() else 0
+            
+            # Log the operation
+            self._log_file_operation("write", filepath, True, file_size)
+            
             logger.info(f"JSON briefing saved: {filepath}")
             return True
             
         except Exception as e:
             logger.error(f"Failed to save JSON briefing: {e}")
+            if 'filepath' in locals():
+                self._log_file_operation("write", filepath, False)
             return False
 
 class NotionOutputHandler(OutputHandler):

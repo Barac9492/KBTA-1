@@ -1,231 +1,172 @@
-# K-Beauty Daily Trend Briefing System
+# 🎯 K-Beauty Trend Agent
 
-An intelligent, modular AI system that delivers daily Korean beauty trend briefings to US buyers. Built with clean architecture, automated pipelines, and multiple output formats.
+> **AI-Powered Daily Korean Beauty Trend Analysis**  
+> Automated scraping, analysis, and synthesis of K-beauty trends using GPT-4
 
-## 🎯 Overview
+[![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/kbeauty-trend-agent)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This system automatically:
-1. **Scrapes** Korean beauty content from Naver, Instagram, and YouTube
-2. **Analyzes** trends using GPT-4-powered AI agents
-3. **Synthesizes** insights into actionable business intelligence
-4. **Delivers** daily briefings in Markdown, JSON, and Notion formats
-5. **Provides** RESTful API for automation and integration
+## 🚀 Live Demo
 
-## 🏗️ Architecture
+**Frontend**: https://kbeauty-trend-agent-32nl74itm-ethancho12-gmailcoms-projects.vercel.app  
+**API**: https://kbeauty-trend-agent-32nl74itm-ethancho12-gmailcoms-projects.vercel.app/api
 
-```
-kbeauty-trend-agent/
-├── core/                    # Core business logic
-│   ├── config.py           # Centralized configuration
-│   ├── models.py           # Data models and types
-│   ├── scraper.py          # Modular web scraper
-│   ├── agents.py           # AI agent pipeline
-│   ├── output.py           # Output handlers
-│   └── pipeline.py         # Main orchestration
-├── agents/                  # AI agent prompts
-│   ├── trend-researcher.md
-│   └── feedback-synthesizer.md
-├── api/                     # FastAPI application
-│   └── main.py             # RESTful API endpoints
-├── output/                  # Generated briefings
-├── scripts/                 # Legacy scripts (deprecated)
-├── frontend/                # React dashboard
-├── data/                    # Sample data
-├── run_daily_briefing.py   # Simple execution script
-├── requirements.txt         # Dependencies
-├── env.example             # Environment template
-└── README.md               # This file
-```
+## ✨ Features
+
+### 🤖 AI-Powered Analysis
+- **GPT-4 Integration**: Advanced trend analysis and synthesis
+- **Multi-Source Scraping**: Korean beauty blogs, social media, product reviews
+- **Real-time Insights**: Daily automated briefings with actionable recommendations
+
+### 🔄 Automated Workflow
+- **Serverless Architecture**: Deployed on Vercel with zero maintenance
+- **Webhook Integration**: Compatible with Make.com, Zapier, and custom automation
+- **Background Processing**: Non-blocking analysis pipeline
+
+### 📊 Rich Output Formats
+- **Markdown Reports**: Beautiful, formatted briefings
+- **JSON Data**: Structured data for integrations
+- **Notion Integration**: Direct publishing to Notion databases
+- **Real-time Streaming**: Instant markdown preview
+
+## 🛠 Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| **Backend** | FastAPI, Python 3.11+ |
+| **Frontend** | Next.js 15, TypeScript, Tailwind CSS |
+| **AI/ML** | OpenAI GPT-4, Custom Prompt Engineering |
+| **Deployment** | Vercel (Serverless Functions) |
+| **Database** | File-based (JSON) + Notion (Optional) |
+| **Monitoring** | Built-in logging and health checks |
 
 ## 🚀 Quick Start
 
-### 1. Setup Environment
+### 1. Clone & Setup
 
 ```bash
-# Clone and setup
-git clone <repository>
+git clone https://github.com/yourusername/kbeauty-trend-agent.git
 cd kbeauty-trend-agent
+```
 
-# Install dependencies
-pip install -r requirements.txt
-playwright install chromium
+### 2. Environment Configuration
 
-# Copy environment template
+```bash
 cp env.example .env
 ```
 
-### 2. Configure Environment
-
 Edit `.env` with your API keys:
 
-```bash
+```env
 # Required
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=sk-your-openai-key-here
 
-# Optional - Notion Integration
-NOTION_TOKEN=your_notion_token_here
-NOTION_DATABASE_ID=your_database_id_here
+# Optional (for Notion integration)
+NOTION_TOKEN=your-notion-token
+NOTION_DATABASE_ID=your-database-id
 
-# Optional - Custom Settings
-SCHEDULE_TIME=09:00
-AUTO_RUN=false
-MARKDOWN_ENABLED=true
-JSON_ENABLED=true
+# Optional (for custom sources)
+NAVER_CLIENT_ID=your-naver-client-id
+NAVER_CLIENT_SECRET=your-naver-client-secret
 ```
 
-### 3. Run Daily Briefing
+### 3. Local Development
 
 ```bash
-# Simple execution
-python run_daily_briefing.py
+# Install dependencies
+pip install -r requirements.txt
+cd frontend && npm install
 
-# Or via API
-uvicorn api.main:app --reload
-curl -X POST http://localhost:8000/trigger
-```
-
-## 📊 Features
-
-### 🔍 **Intelligent Scraping**
-- **Playwright-based** dynamic content scraping
-- **Multi-source** collection (Naver, Instagram, YouTube)
-- **Relevance filtering** for K-beauty content
-- **Rate limiting** and error handling
-
-### 🤖 **AI-Powered Analysis**
-- **GPT-4** trend research and synthesis
-- **Modular agents** with specialized prompts
-- **Business intelligence** generation
-- **Confidence scoring** for trends
-
-### 📤 **Multiple Output Formats**
-- **Markdown** - Human-readable briefings
-- **JSON** - Machine-readable data
-- **Notion** - Team collaboration database
-- **API** - RESTful endpoints for automation
-
-### ⚡ **Automation Ready**
-- **Daily scheduling** with configurable timing
-- **Webhook support** for external triggers
-- **Background processing** for scalability
-- **Status monitoring** and error handling
-
-## 🛠️ Usage
-
-### Manual Execution
-
-```bash
-# Run a single briefing
-python run_daily_briefing.py
-
-# Run with custom settings
-python -c "
-import asyncio
-from core.pipeline import DailyBriefingPipeline
-pipeline = DailyBriefingPipeline()
-asyncio.run(pipeline.run_daily_briefing())
-"
-```
-
-### API Endpoints
-
-```bash
 # Start API server
-uvicorn api.main:app --reload
+python api/main.py
 
-# Trigger briefing
-curl -X POST http://localhost:8000/trigger
+# Start frontend (in another terminal)
+cd frontend && npm run dev
+```
 
-# Get status
-curl http://localhost:8000/status
+### 4. Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+## 📡 API Endpoints
+
+### Core Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check and configuration status |
+| `/api/latest` | GET | Get latest briefing data |
+| `/api/markdown` | GET | Stream latest briefing as markdown |
+| `/api/download/json` | GET | Download latest briefing as JSON |
+| `/api/trigger` | POST | Manually trigger new analysis |
+| `/api/webhook` | POST | Webhook endpoint for automation |
+
+### Example Usage
+
+```bash
+# Health check
+curl https://your-app.vercel.app/api/health
 
 # Get latest briefing
-curl http://localhost:8000/latest
+curl https://your-app.vercel.app/api/latest
 
-# Download briefing files
-curl http://localhost:8000/download/markdown
-curl http://localhost:8000/download/json
-
-# Start automated scheduler
-curl -X POST http://localhost:8000/scheduler/start
-```
-
-### Webhook Integration
-
-```bash
-# Trigger via webhook
-curl -X POST http://localhost:8000/webhook \
+# Trigger new analysis
+curl -X POST https://your-app.vercel.app/api/trigger \
   -H "Content-Type: application/json" \
-  -d '{"source": "make.com", "event_type": "daily_trigger"}'
+  -d '{"force_refresh": false, "include_notion_push": true}'
+
+# Download markdown
+curl https://your-app.vercel.app/api/markdown
 ```
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `OPENAI_API_KEY` | ✅ | - | OpenAI API key |
-| `NOTION_TOKEN` | ❌ | - | Notion integration token |
-| `NOTION_DATABASE_ID` | ❌ | - | Notion database ID |
-| `SCHEDULE_TIME` | ❌ | `09:00` | Daily run time (HH:MM) |
-| `AUTO_RUN` | ❌ | `false` | Enable automatic scheduling |
-| `MARKDOWN_ENABLED` | ❌ | `true` | Enable Markdown output |
-| `JSON_ENABLED` | ❌ | `true` | Enable JSON output |
-| `OUTPUT_DIR` | ❌ | `output` | Output directory path |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ✅ | OpenAI API key for GPT-4 |
+| `NOTION_TOKEN` | ❌ | Notion integration token |
+| `NOTION_DATABASE_ID` | ❌ | Notion database ID |
+| `VERCEL` | Auto | Set to "true" on Vercel |
 
-### Scraping Sources
+### Customization
 
-The system scrapes from:
-- **Naver Beauty** - Korean beauty blogs and communities
-- **Instagram** - K-beauty hashtags and influencers
-- **YouTube** - Korean beauty channels and reviews
+#### Adding New Sources
 
-### Output Formats
+Edit `core/config.py`:
 
-#### Markdown Briefing
-```markdown
-# K-Beauty Daily Briefing - January 15, 2024
-
-## Executive Summary
-[AI-generated summary of current trends]
-
-## Priority Trends
-### #1 Glass Skin Technique
-- **Business Impact**: High
-- **Time to Market**: Immediate
-- **Target Audience**: 20-35, beauty enthusiasts
-- **Recommendations**:
-  - Develop multi-step routine products
-  - Focus on transparency-enhancing ingredients
+```python
+def get_sources_config(self) -> Dict:
+    return {
+        "your_new_source": {
+            "urls": ["https://your-source.com"],
+            "selectors": {
+                "posts": "your-css-selector",
+                "title": "title-selector",
+                "content": "content-selector"
+            }
+        }
+    }
 ```
 
-#### JSON Structure
-```json
-{
-  "briefing_id": "briefing_20240115_103000",
-  "date": "2024-01-15T10:30:00",
-  "scraped_posts_count": 45,
-  "trend_analysis": { ... },
-  "synthesis_results": { ... }
-}
-```
+#### Modifying Analysis Prompts
 
-## 🔄 Automation with Make.com
+Edit `core/pipeline.py` to customize GPT-4 prompts for:
+- Trend identification
+- Executive summaries
+- Actionable recommendations
 
-### Webhook Setup
-1. Create a Make.com scenario
-2. Add HTTP webhook trigger
-3. Configure to call `POST /webhook` endpoint
-4. Set up daily scheduling in Make.com
+## 🤖 Automation Examples
 
-### Example Make.com Flow
-```
-Daily Trigger → HTTP Webhook → K-Beauty API → 
-Slack Notification → Notion Update → Email Digest
-```
+### Make.com Webhook
 
-### Webhook Payload
 ```json
 {
   "source": "make.com",
@@ -237,106 +178,155 @@ Slack Notification → Notion Update → Email Digest
 }
 ```
 
-## 📈 Monitoring & Analytics
+### GitHub Actions (Daily)
 
-### Pipeline Status
+```yaml
+name: Daily K-Beauty Analysis
+on:
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  trigger-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Analysis
+        run: |
+          curl -X POST ${{ secrets.API_URL }}/api/trigger \
+            -H "Content-Type: application/json"
+```
+
+### Slack Integration
+
+```python
+import requests
+
+def send_to_slack(briefing_data):
+    webhook_url = "your-slack-webhook"
+    message = {
+        "text": f"📊 Daily K-Beauty Briefing\n{briefing_data['executive_summary']}"
+    }
+    requests.post(webhook_url, json=message)
+```
+
+## 📈 Performance & Monitoring
+
+### Built-in Monitoring
+
+- **File Operations Logging**: Track all file writes and sizes
+- **Error Tracking**: Comprehensive error logging with stack traces
+- **Health Checks**: Real-time API health monitoring
+- **Vercel Analytics**: Built-in performance monitoring
+
+### Optimization Tips
+
+1. **Use /tmp for Vercel**: All file operations automatically use ephemeral storage
+2. **Background Processing**: Long-running analysis doesn't block API responses
+3. **Caching**: Latest briefing data is cached for fast retrieval
+4. **Error Recovery**: Graceful fallbacks for failed operations
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### 1. Vercel Function Timeout
 ```bash
-# Check pipeline status
-curl http://localhost:8000/status
-
-# Response
+# Increase timeout in vercel.json
 {
-  "status": "completed",
-  "start_time": "2024-01-15T09:00:00",
-  "end_time": "2024-01-15T09:15:30",
-  "briefing_id": "briefing_20240115_090000"
+  "functions": {
+    "api/main.py": {
+      "maxDuration": 60
+    }
+  }
 }
 ```
 
-### Health Check
+#### 2. OpenAI Rate Limits
+```python
+# Add retry logic in core/config.py
+import time
+import openai
+
+def retry_openai_call(func, max_retries=3):
+    for i in range(max_retries):
+        try:
+            return func()
+        except openai.RateLimitError:
+            time.sleep(2 ** i)  # Exponential backoff
+```
+
+#### 3. File System Issues
+```python
+# Automatic fallback to /tmp
+output_dir = "/tmp" if os.getenv("VERCEL") else "output"
+```
+
+### Debug Commands
+
 ```bash
-curl http://localhost:8000/health
+# Check API health
+curl https://your-app.vercel.app/api/health
 
-# Response
-{
-  "status": "healthy",
-  "openai_configured": true,
-  "notion_configured": false,
-  "output_dir": "/path/to/output"
-}
+# View deployment logs
+vercel logs your-app.vercel.app
+
+# Test webhook locally
+curl -X POST http://localhost:8000/api/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"source": "test", "event_type": "manual"}'
 ```
 
-## 🛡️ Error Handling
+## 🎯 Use Cases
 
-The system includes comprehensive error handling:
-- **Scraping failures** - Graceful degradation with partial results
-- **API timeouts** - Retry logic with exponential backoff
-- **Rate limiting** - Automatic throttling and delays
-- **Invalid data** - Validation and fallback responses
+### For Beauty Brands
+- **Trend Monitoring**: Track emerging K-beauty trends
+- **Product Development**: Identify market opportunities
+- **Competitive Analysis**: Monitor competitor activities
 
-## 🔧 Development
+### For Content Creators
+- **Content Ideas**: Generate trending topics for videos/blogs
+- **Product Reviews**: Stay updated on latest releases
+- **Audience Engagement**: Understand what resonates with viewers
 
-### Adding New Sources
-1. Update `core/config.py` with new source configuration
-2. Add scraping logic in `core/scraper.py`
-3. Test with sample data
-
-### Customizing AI Agents
-1. Modify prompts in `agents/` directory
-2. Update agent logic in `core/agents.py`
-3. Test with different content types
-
-### Adding Output Formats
-1. Create new handler in `core/output.py`
-2. Implement `OutputHandler` interface
-3. Register in `OutputPipeline`
-
-## 📝 Sample Output
-
-### Daily Briefing Summary
-```
-🎀 K-Beauty Daily Trend Briefing
-==================================================
-✅ Daily briefing completed successfully!
-📊 Briefing ID: briefing_20240115_103000
-📈 Trends identified: 8
-🎯 Priority trends: 3
-💡 Market opportunities: 4
-⚠️ Risk factors: 3
-📝 Posts analyzed: 45
-
-🏆 Top Priority Trends:
-  #1 Glass Skin Technique (high impact)
-  #2 Cushion Foundation Innovation (high impact)
-  #3 Propolis and Honey Extracts (medium impact)
-
-📁 Output files created:
-  • output/kbeauty_briefing_20240115.md
-  • output/kbeauty_briefing_20240115_103000.json
-
-⏰ Completed at: 2024-01-15 10:30:00
-```
+### For Researchers
+- **Market Analysis**: Quantitative trend data
+- **Academic Research**: Korean beauty industry insights
+- **Data Collection**: Automated scraping and analysis
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- **TypeScript**: Strict typing for frontend components
+- **Python**: Type hints and docstrings for all functions
+- **Testing**: Unit tests for core functionality
+- **Documentation**: Comprehensive docstrings and README updates
 
 ## 📄 License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For issues and questions:
-1. Check the logs in the console output
-2. Verify your API keys are correct
-3. Ensure all dependencies are installed
-4. Check the `/health` endpoint for system status
+- **OpenAI**: For GPT-4 API access
+- **Vercel**: For serverless hosting
+- **Next.js Team**: For the amazing React framework
+- **FastAPI**: For the high-performance Python web framework
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/kbeauty-trend-agent/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/kbeauty-trend-agent/discussions)
+- **Email**: your-email@example.com
 
 ---
 
-**Built for solo operators who need intelligent, automated K-beauty trend intelligence delivered daily.** 
+**Built with ❤️ for the K-beauty community**
+
+*This project demonstrates modern AI-powered automation, combining web scraping, natural language processing, and serverless architecture to deliver actionable business insights.* 

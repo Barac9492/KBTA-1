@@ -7,11 +7,11 @@ import {
   Home, 
   Archive, 
   Bell, 
-  TrendingUp, 
   Sparkles,
   Menu,
   X
 } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
@@ -22,10 +22,10 @@ const navigation = [
 ];
 
 interface NavigationProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export function Navigation({ children }: NavigationProps) {
+export function Navigation({ children }: NavigationProps = {}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -69,9 +69,9 @@ export function Navigation({ children }: NavigationProps) {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md nav-item-hover ${
                       isActive
-                        ? 'bg-pink-100 text-pink-700'
+                        ? 'bg-pink-100 text-pink-700 glow-pink'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
@@ -95,6 +95,9 @@ export function Navigation({ children }: NavigationProps) {
                 <Sparkles className="h-8 w-8 text-pink-500" />
                 <span className="text-xl font-bold text-gray-900">K-Beauty Trends</span>
               </div>
+              <div className="ml-auto">
+                <ThemeToggle />
+              </div>
             </div>
             
             <nav className="mt-8 flex-1 space-y-1 px-2">
@@ -104,9 +107,9 @@ export function Navigation({ children }: NavigationProps) {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md nav-item-hover transition-colors ${
                       isActive
-                        ? 'bg-pink-100 text-pink-700'
+                        ? 'bg-pink-100 text-pink-700 glow-pink'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     }`}
                   >

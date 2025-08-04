@@ -75,7 +75,9 @@ class DailyBriefingPipeline:
             
             # Step 3: Create briefing
             logger.info("Step 3: Creating daily briefing...")
+            briefing_id = f"briefing_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             briefing = DailyBriefing(
+                briefing_id=briefing_id,
                 date=datetime.now(),
                 scraped_posts_count=len(posts),
                 trend_analysis=trend_analysis,

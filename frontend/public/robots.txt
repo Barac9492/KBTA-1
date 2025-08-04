@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://kbeauty-trend-agent.vercel.app/sitemap.xml
+
+# Disallow admin and API endpoints
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# Allow important pages
+Allow: /
+Allow: /archive
+Allow: /subscribe 

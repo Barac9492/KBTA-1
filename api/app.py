@@ -12,8 +12,9 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import os
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -74,6 +75,13 @@ analysis_status = {
     "last_status": "idle"
 }
 
+def get_output_dir():
+    """Get the appropriate output directory based on environment."""
+    if os.getenv("VERCEL"):
+        return Path("/tmp")
+    else:
+        return Path("output")
+
 @app.get("/")
 async def root():
     """Root endpoint with API information."""
@@ -83,8 +91,11 @@ async def root():
         "endpoints": {
             "trigger": "POST /trigger - Manually trigger trend analysis",
             "trends": "GET /trends - Get latest trends from cache",
+            "latest": "GET /latest - Get latest briefing data",
+            "markdown": "GET /markdown - Stream latest briefing as markdown",
             "webhook": "POST /webhook - Webhook endpoint for automated triggers",
-            "status": "GET /status - Get current analysis status"
+            "status": "GET /status - Get current analysis status",
+            "health": "GET /health - Health check"
         }
     }
 
@@ -97,6 +108,129 @@ async def get_status():
         "last_status": analysis_status["last_status"],
         "timestamp": datetime.now().isoformat()
     }
+
+@app.get("/latest")
+async def get_latest_briefing():
+    """Get the latest briefing data."""
+    try:
+        output_dir = get_output_dir()
+        
+        # Look for the most recent JSON file
+        json_files = list(output_dir.glob("kbeauty_briefing_*.json"))
+        
+        if not json_files:
+            # Try to find any briefing files
+            all_files = list(output_dir.glob("*briefing*"))
+            if not all_files:
+                raise HTTPException(
+                    status_code=404,
+                    detail="No briefing data available. Please run analysis first."
+                )
+            
+            # If no JSON files, return basic info
+            return {
+                "status": "no_json_data",
+                "message": "Briefing files exist but no JSON data available",
+                "available_files": [f.name for f in all_files],
+                "timestamp": datetime.now().isoformat()
+            }
+        
+        # Get the most recent file
+        latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
+        
+        with open(latest_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        return {
+            "status": "success",
+            "message": "Latest briefing data retrieved successfully",
+            "data": data,
+            "filename": latest_file.name,
+            "last_modified": datetime.fromtimestamp(latest_file.stat().st_mtime).isoformat(),
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error retrieving latest briefing: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error retrieving latest briefing: {str(e)}"
+        )
+
+@app.get("/markdown")
+async def get_latest_markdown():
+    """Stream the latest briefing as markdown."""
+    try:
+        output_dir = get_output_dir()
+        
+        # Look for the most recent markdown file
+        md_files = list(output_dir.glob("kbeauty_briefing_*.md"))
+        
+        if not md_files:
+            raise HTTPException(
+                status_code=404,
+                detail="No markdown briefing available. Please run analysis first."
+            )
+        
+        # Get the most recent file
+        latest_file = max(md_files, key=lambda f: f.stat().st_mtime)
+        
+        with open(latest_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Return as streaming response with proper headers
+        return Response(
+            content=content,
+            media_type="text/markdown",
+            headers={
+                "Content-Disposition": f"inline; filename={latest_file.name}",
+                "Cache-Control": "no-cache"
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Error retrieving markdown: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error retrieving markdown: {str(e)}"
+        )
+
+@app.get("/download/json")
+async def download_latest_json():
+    """Download the latest briefing as JSON file."""
+    try:
+        output_dir = get_output_dir()
+        
+        # Look for the most recent JSON file
+        json_files = list(output_dir.glob("kbeauty_briefing_*.json"))
+        
+        if not json_files:
+            raise HTTPException(
+                status_code=404,
+                detail="No JSON briefing available. Please run analysis first."
+            )
+        
+        # Get the most recent file
+        latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
+        
+        with open(latest_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return Response(
+            content=content,
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f"attachment; filename={latest_file.name}",
+                "Cache-Control": "no-cache"
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Error downloading JSON: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error downloading JSON: {str(e)}"
+        )
 
 @app.post("/trigger", response_model=TrendResponse)
 async def trigger_analysis(request: TriggerRequest, background_tasks: BackgroundTasks):
@@ -243,7 +377,7 @@ async def run_analysis_pipeline(
         }
         
         # Save error to file
-        error_file = Path("data/analysis_error.json")
+        error_file = get_output_dir() / "analysis_error.json"
         error_file.parent.mkdir(exist_ok=True)
         with open(error_file, 'w') as f:
             json.dump(error_details, f, indent=2)
@@ -264,7 +398,9 @@ async def get_config():
         "openai_configured": bool(os.getenv("OPENAI_API_KEY")),
         "notion_configured": bool(os.getenv("NOTION_TOKEN") and os.getenv("NOTION_DATABASE_ID")),
         "data_directory": str(Path("data").absolute()),
-        "agents_directory": str(Path("agents").absolute())
+        "agents_directory": str(Path("agents").absolute()),
+        "output_directory": str(get_output_dir()),
+        "vercel_environment": bool(os.getenv("VERCEL"))
     }
 
 if __name__ == "__main__":

@@ -12,9 +12,9 @@ export interface Trend {
   id: string;
   title: string;
   description: string;
-  category: TrendCategory;
-  business_impact: BusinessImpact;
-  time_to_market: TimeToMarket;
+  category: TrendCategory | string;
+  business_impact: BusinessImpact | string;
+  time_to_market: TimeToMarket | string;
   sources: string[];
   keywords: string[];
 }
@@ -25,7 +25,7 @@ export interface PriorityTrend {
   description: string;
   reasoning: string;
   action_items: string[];
-  business_impact: BusinessImpact;
+  business_impact: BusinessImpact | string;
 }
 
 export interface MarketOpportunity {
@@ -70,9 +70,15 @@ export interface DailyBriefing {
 
 export interface BriefingListItem {
   briefing_id: string;
+  title?: string;
   date: string;
-  executive_summary: string;
+  executive_summary?: string;
+  summary?: string;
   trends_count: number;
+  trend_count?: number;
+  source_count?: number;
+  category?: string;
+  categories?: string[];
 }
 
 export enum TrendCategory {
