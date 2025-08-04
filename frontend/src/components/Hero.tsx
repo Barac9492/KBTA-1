@@ -63,7 +63,7 @@ export function Hero() {
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-            Discover Tomorrow's
+            Discover Tomorrow&apos;s
             <br />
             <span className="bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent">
               K-Beauty Trends

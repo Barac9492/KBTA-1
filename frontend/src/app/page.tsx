@@ -77,7 +77,7 @@ export default function HomePage() {
         const data = await response.json()
         
         if (data.status === 'success' && data.data?.trend_analysis?.trends) {
-          const apiTrends = data.data.trend_analysis.trends.slice(0, 3).map((trend: any) => ({
+          const apiTrends = data.data.trend_analysis.trends.slice(0, 3).map((trend: { id?: string; title: string; summary: string; category: string }) => ({
             id: trend.id || Math.random().toString(),
             title: trend.title,
             summary: trend.summary,
@@ -88,7 +88,7 @@ export default function HomePage() {
         } else {
           setTrends(fallbackTrends)
         }
-      } catch (error) {
+      } catch {
         console.log('Using fallback trends')
         setTrends(fallbackTrends)
       } finally {
@@ -132,7 +132,7 @@ export default function HomePage() {
               Live Trend Preview
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Real-time insights from the world's most innovative beauty market
+              Real-time insights from the world&apos;s most innovative beauty market
             </p>
           </div>
           
