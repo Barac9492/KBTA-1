@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Beauty Trend Agent - AI-Powered Beauty Intelligence Platform</title>
+    <meta name="description" content="Get real-time K-beauty insights, trend forecasts, and market analysis. The Bloomberg of Beauty - powered by AI for beauty professionals and enthusiasts.">
+    <meta name="keywords" content="K-beauty, Korean beauty, trend analysis, AI beauty, beauty intelligence, skincare trends, beauty market">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="K-Beauty Trend Agent - AI-Powered Beauty Intelligence">
+    <meta property="og:description" content="Real-time K-beauty insights and trend forecasts powered by AI">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1200&h=630&fit=crop">
+    <meta property="og:url" content="https://kbeauty-trend-agent.vercel.app">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --kbeauty-pink: #ec4899;
+            --kbeauty-purple: #a855f7;
+            --kbeauty-rose: #f43f5e;
+            --kbeauty-lavender: #e879f9;
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-glow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #fef3c7 100%);
+            color: #1f2937;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Glass morphism base */
+        .glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--kbeauty-pink), var(--kbeauty-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Button styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--kbeauty-pink), var(--kbeauty-purple));
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--kbeauty-pink);
+            padding: 12px 24px;
+            border: 2px solid var(--kbeauty-pink);
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--kbeauty-pink);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--kbeauty-pink);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--kbeauty-pink);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: #6b7280;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--kbeauty-pink), var(--kbeauty-purple));
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--kbeauty-pink), var(--kbeauty-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            padding: 30px;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 60px;
+            color: var(--kbeauty-pink);
+            opacity: 0.3;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #4b5563;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--kbeauty-pink);
+        }
+
+        .testimonial-role {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 80px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .pricing-card {
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+            border: 2px solid var(--kbeauty-pink);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--kbeauty-pink);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--kbeauty-pink);
+            margin-bottom: 10px;
+        }
+
+        .price-period {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features li {
+            padding: 8px 0;
+            color: #4b5563;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--kbeauty-pink);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            color: var(--kbeauty-pink);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--kbeauty-pink);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid,
+            .testimonials-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #4b5563 100%);
+                color: #f9fafb;
+            }
+            
+            .glass-card {
+                background: rgba(31, 41, 55, 0.9);
+                border-color: rgba(75, 85, 99, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <i class="fas fa-sparkles"></i> K-Beauty Trends
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="https://kbeauty-trend-agent-o05wtuk2w-ethancho12-gmailcoms-projects.vercel.app" target="_blank">Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="gradient-text fade-in">
+                The Bloomberg of Beauty
+            </h1>
+            <p class="fade-in">
+                Get real-time K-beauty insights, trend forecasts, and market analysis powered by AI. 
+                Stay ahead of the curve with daily briefings and predictive analytics.
+            </p>
+            <div class="hero-buttons fade-in">
+                <button class="btn-primary" onclick="scrollToSection('pricing')">
+                    <i class="fas fa-rocket"></i> Get Started Free
+                </button>
+                <button class="btn-secondary" onclick="showDemo()">
+                    <i class="fas fa-play"></i> Watch Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title gradient-text">Why Choose K-Beauty Trend Agent?</h2>
+            <div class="features-grid">
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>24/7 automated scraping from top K-beauty sources including Glowpick, Olive Young, and social media trends.</p>
+                </div>
+                
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Daily Briefings</h3>
+                    <p>Personalized insights delivered daily with trend forecasts, market analysis, and actionable recommendations.</p>
+                </div>
+                
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3>Smart Personalization</h3>
+                    <p>Get insights tailored to your skin type, region, and specific beauty interests with our advanced AI.</p>
+                </div>
+                
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-crystal-ball"></i>
+                    </div>
+                    <h3>2025 Forecasts</h3>
+                    <p>Predict upcoming trends like haircare booms, PDRN facials, propolis extracts, and climate-resilient skincare.</p>
+                </div>
+                
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Global Market Intel</h3>
+                    <p>Track tariff impacts, supply chain insights, and international market dynamics affecting K-beauty.</p>
+                </div>
+                
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile-First Design</h3>
+                    <p>Access insights anywhere with our responsive platform optimized for mobile and desktop experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Trends Preview -->
+    <section class="features" style="background: rgba(255, 255, 255, 0.3);">
+        <div class="container">
+            <h2 class="section-title gradient-text">Live Trend Preview</h2>
+            <div id="trends-container" class="features-grid">
+                <div class="feature-card glass-card skeleton" style="height: 200px;"></div>
+                <div class="feature-card glass-card skeleton" style="height: 200px;"></div>
+                <div class="feature-card glass-card skeleton" style="height: 200px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title gradient-text">What Our Users Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card glass-card fade-in">
+                    <p class="testimonial-text">
+                        "K-Beauty Trend Agent has revolutionized how I discover new products. The AI insights are spot-on and help me stay ahead of trends before they hit mainstream."
+                    </p>
+                    <div class="testimonial-author">Sarah Kim</div>
+                    <div class="testimonial-role">Beauty Influencer, @sarahkbeauty</div>
+                </div>
+                
+                <div class="testimonial-card glass-card fade-in">
+                    <p class="testimonial-text">
+                        "As a beauty marketer, this platform is invaluable. The predictive analytics help us launch products at the perfect time, and the market insights are gold."
+                    </p>
+                    <div class="testimonial-author">Michael Chen</div>
+                    <div class="testimonial-role">Marketing Director, GlowCo</div>
+                </div>
+                
+                <div class="testimonial-card glass-card fade-in">
+                    <p class="testimonial-text">
+                        "The tariff and supply chain insights have saved us thousands. We can now source products strategically and avoid costly delays."
+                    </p>
+                    <div class="testimonial-author">Lisa Park</div>
+                    <div class="testimonial-role">Retail Manager, BeautyMart</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title gradient-text">Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card glass-card fade-in">
+                    <h3>Free</h3>
+                    <div class="price">$0</div>
+                    <div class="price-period">Forever</div>
+                    <ul class="pricing-features">
+                        <li>Basic trend insights</li>
+                        <li>Daily email digest</li>
+                        <li>Limited API calls</li>
+                        <li>Community access</li>
+                    </ul>
+                    <button class="btn-secondary">Get Started</button>
+                </div>
+                
+                <div class="pricing-card glass-card featured fade-in">
+                    <h3>Premium</h3>
+                    <div class="price">$9</div>
+                    <div class="price-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>Full trend reports</li>
+                        <li>Personalized insights</li>
+                        <li>Advanced analytics</li>
+                        <li>Priority support</li>
+                        <li>API access</li>
+                        <li>Export data</li>
+                    </ul>
+                    <button class="btn-primary">Start Free Trial</button>
+                </div>
+                
+                <div class="pricing-card glass-card fade-in">
+                    <h3>Enterprise</h3>
+                    <div class="price">$29</div>
+                    <div class="price-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>Everything in Premium</li>
+                        <li>Custom integrations</li>
+                        <li>Dedicated support</li>
+                        <li>White-label options</li>
+                        <li>Advanced forecasting</li>
+                        <li>Team collaboration</li>
+                    </ul>
+                    <button class="btn-secondary">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>K-Beauty Trend Agent</h4>
+                    <p>The Bloomberg of Beauty - AI-powered insights for the beauty industry.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="https://kbeauty-trend-agent-o05wtuk2w-ethancho12-gmailcoms-projects.vercel.app" target="_blank">Dashboard</a></li>
+                        <li><a href="#" onclick="showDemo()">Demo</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <p>&copy; 2025 K-Beauty Trend Agent. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.feature-card, .testimonial-card, .pricing-card');
+            cards.forEach(card => observer.observe(card));
+        });
+
+        // Smooth scrolling
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Demo function
+        function showDemo() {
+            alert('Demo coming soon! In the meantime, check out our live dashboard at the link in the navigation.');
+        }
+
+        // Fetch live trends
+        async function fetchTrends() {
+            try {
+                const response = await fetch('https://kbeauty-trend-agent-o05wtuk2w-ethancho12-gmailcoms-projects.vercel.app/api/latest');
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.data) {
+                    displayTrends(data.data.trend_analysis.trends.slice(0, 3));
+                } else {
+                    displayFallbackTrends();
+                }
+            } catch (error) {
+                console.log('Using fallback trends');
+                displayFallbackTrends();
+            }
+        }
+
+        function displayTrends(trends) {
+            const container = document.getElementById('trends-container');
+            container.innerHTML = '';
+            
+            trends.forEach(trend => {
+                const card = document.createElement('div');
+                card.className = 'feature-card glass-card fade-in';
+                card.innerHTML = `
+                    <div class="feature-icon">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <h3>${trend.title}</h3>
+                    <p>${trend.summary}</p>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: var(--kbeauty-pink);">
+                        <i class="fas fa-tag"></i> ${trend.category}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function displayFallbackTrends() {
+            const container = document.getElementById('trends-container');
+            container.innerHTML = '';
+            
+            const fallbackTrends = [
+                {
+                    title: "Glass Skin Technique",
+                    summary: "The latest glass skin trend focuses on multi-layered hydration with propolis and ceramides.",
+                    category: "Skincare"
+                },
+                {
+                    title: "Cream Makeup Boom",
+                    summary: "Cream-based makeup products are dominating the market with their natural, dewy finish.",
+                    category: "Makeup"
+                },
+                {
+                    title: "Overnight Mask Innovation",
+                    summary: "Advanced overnight masks with PDRN and growth factors are revolutionizing skin repair.",
+                    category: "Skincare"
+                }
+            ];
+            
+            fallbackTrends.forEach(trend => {
+                const card = document.createElement('div');
+                card.className = 'feature-card glass-card fade-in';
+                card.innerHTML = `
+                    <div class="feature-icon">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <h3>${trend.title}</h3>
+                    <p>${trend.summary}</p>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: var(--kbeauty-pink);">
+                        <i class="fas fa-tag"></i> ${trend.category}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Load trends on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(fetchTrends, 1000); // Small delay for better UX
+        });
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add hover effects to buttons
+            const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add parallax effect to hero background
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
